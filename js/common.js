@@ -139,16 +139,12 @@ $(document).ready(function() {
 
 	// Product item add to cart
 	$('.btn_plus').on('click', function(e) {
-		// var prices = $this.parent().data().price;
-		// var totalPriceContainer = $('#product_total_price');
-		// var currentSum = +totalPriceContainer.text();
-		// var diff = prices[1] - prices[0];
-
-
 		var input = $(this).siblings('input');
-		var current = +input.val();
+		var current = +input.val() + 1;
 		var $this = $(this);
-		$this.siblings('input').val(current + 1);
+		//console.log(current);
+		input.val(current);
+		//console.log(current);
 		$this.siblings('.btn_minus').removeClass('disabled');
 		if($(e.target).hasClass('btn_plus_product_card')) {
 			var prices = $('.product_card--size').data().price;
@@ -158,20 +154,26 @@ $(document).ready(function() {
 			else {
 				setProductTotalPrice(prices[1] + getAddsTotalPrice());
 			}
-			
 		}
 	});
 
 	$('.btn_minus').on('click', function(e) {
 		var input = $(this).siblings('input');
-		var current = +input.val();
-		if(current > 2) {
-			$(this).siblings('input').val(current - 1);
+		var current = +input.val() - 1;
+		if(current >= 1) {
+			input.val(current);
 			if($(e.target).hasClass('btn_minus_product_card')) {
-				//console.log(getProductTotalPrice());
+				var prices = $('.product_card--size').data().price;
+				if($('.product_card--size_btn.active').data().size == 'small'){
+					setProductTotalPrice(-(prices[0] + getAddsTotalPrice()));
+				}
+				else {
+					setProductTotalPrice(-(prices[1] + getAddsTotalPrice()));
+				}
 			}
 		}
-		else {
+		if(current == 1) {
+			console.log(current);
 			$(this).addClass('disabled');
 			$(this).siblings('input').val(1);
 		}
@@ -185,22 +187,38 @@ $(document).ready(function() {
 	$('#productForm').on('submit', function(e){
 		e.preventDefault();
 		var form = $(this);
-		$('.additives_item').removeClass('added');
-		form.trigger("reset");
-		$('.product_card--adds_price span').text(0);
-		$('#product_total_price').text($('.product_card--size').data().price[0]);
+		$('#totalPrice').val($('#product_total_price').text());
+		var adds = [];
+		$('.product_card--added_item.shown span').each(function(index, el){
+			adds.push(el.textContent);
+		});
+		$('#additivesInput').val(adds);
+		///////////////////////////////////////
+		// $('.additives_item').removeClass('added');
+		// form.trigger("reset");
+		// $('.product_card--adds_price span').text(0);
+		// $('#product_total_price').text($('.product_card--size').data().price[0]);
 		
-		$('.product_card--size_btn').removeClass('active');
-		$('.product_card--size_btn')[0].classList.add('active');
-
+		// $('.product_card--size_btn').removeClass('active');
+		// $('.product_card--size_btn')[0].classList.add('active');
+		//window.location.href = "/thanks.html";
+		////////////////////////////////////////
 		$.ajax({
 			type: form.attr('method'),
 			url: form.attr('action'),
 			data: form.serialize()
-		  }).done(function() {
-			console.log('Data sent');
-			$('.additives_item').removeClass('added');
-			form.trigger("reset");
+		  }).done(function(serverData) { // в случае успеха
+			$('.additives_item').removeClass('added'); // я очищаю все добавки
+			form.trigger('reset'); // резетну форму
+			$('.product_card--adds_price span').text(0);
+			$('#product_total_price').text($('.product_card--size').data().price[0]);
+			$('.product_card--size_btn').removeClass('active');
+			$('.product_card--size_btn')[0].classList.add('active');
+			console.log(serverData); // твой ответ от сервера. Передай мне его тоже в json
+									 // тут по ходу будут данные для корзины (общая сумма, айди товара и прочая хуйня)
+									 // и тут же я буду делать редирект на страницу благодарности что-то типа такого:
+									 window.location.href = "/thanks.html";
+									 // но мне надо знать на каком языке мы находимся, чтоб переправлять на нужную страницу благодарности
 		  }).fail(function() {
 			console.error('Data sending failed');
 		  });
