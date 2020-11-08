@@ -21,7 +21,6 @@ $(document).ready(function() {
 	}
 
 	function setProductTotalPrice(value) {
-		//console.log(value);
 		$('#product_total_price').text(+getProductTotalPrice() + value);
 	}
 
@@ -104,10 +103,16 @@ $(document).ready(function() {
 
 	// Product Card remove additives
 	$('.product_card--added_item i').on('click', function(){
+		var addsContainer = $('.product_card--adds_price span');
+		var addsCurrentPrice = +addsContainer.text();
 		var item = $(this).parent();
-		var id = item.data().id
+		var id = item.data().id;
+		var currentPrice = +$('.additives_item')[id].dataset.price;
 		item.removeClass('shown');
 		$('.additives_item')[id].classList.remove('added');
+		addsContainer.text(addsCurrentPrice - currentPrice);
+		setProductTotalPrice(-currentPrice);
+		
 	});
 
 	// Custom Select
