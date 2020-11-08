@@ -9,6 +9,33 @@
 	p br {
 		display: none;
 	}
+	.phone {
+		margin-left: 0;
+	}
+	.logo img {
+		max-width: 13rem;
+	}
+	.product_item--descr {
+		padding: 1.2rem 0rem;
+	}
+	.product_item--info-btn {
+		right: -12px;
+	}
+	.product_item--price .price {
+		font-size: 2.2rem;
+	}
+	.footer .contact {
+		flex: 0 0 21rem;
+	}
+	.footer .payment {
+		flex: 0 0 60rem;
+	}
+	.footer .footer_bottom .footer_logo {
+		flex: 0 0 18rem;
+	}
+	.footer .footer_tel {
+		font-size: 2rem;
+	}
 }
 
 /* Medium Devices, Desktops */
@@ -60,6 +87,12 @@
 	}
 	.open_form .timer__item {
 		padding-top: 1.5rem;
+	}
+	.product_item--price .price {
+		font-size: 3rem;
+	}
+	.product_item--descr {
+		padding: 1.2rem 3rem;
 	}
 }
 

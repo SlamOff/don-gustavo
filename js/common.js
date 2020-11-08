@@ -5,27 +5,171 @@
 $(document).ready(function() {
 	// remove placeholder after click
 	$('input, textarea').focus(function(){
-		$(this).data('placeholder',$(this).attr('placeholder'))
-		$(this).attr('placeholder','');
+		$(this).data('placeholder', $(this).attr('placeholder'))
+		$(this).attr('placeholder', '');
 	});
 	$('input, textarea').blur(function(){
 		$(this).attr('placeholder', $(this).data('placeholder'));
 	});
 
+	function getAddsTotalPrice(){
+		return +$('.product_card--adds_price span').text();
+	}
+
+	function getProductTotalPrice(){
+		return +$('#product_total_price').text();
+	}
+
+	function setProductTotalPrice(value) {
+		//console.log(value);
+		$('#product_total_price').text(+getProductTotalPrice() + value);
+	}
+
+	// Product Size Selection
+	$('.product_card--size_btn').on('click', function(){
+		var $this = $(this);
+		var prices = $this.parent().data().price;
+		var totalPriceContainer = $('#product_total_price');
+		//var currentSum = +totalPriceContainer.text();
+		//var diff = prices[1] - prices[0];
+		
+		if($this.hasClass('active')){
+			return false;
+		}
+		else {
+			$('.product_card--size_btn').removeClass('active');
+			$this.addClass('active');
+			$('.product_card--quantity .quantity input').val(1);
+			//setProductTotalPrice(1);
+			//totalPriceContainer.text(1);
+
+			$('#size').val($this.find('.product_size').text());
+			$('#weight').val($this.find('.product_weight').text());
+
+			$('.product_card--added_item').removeClass('shown');
+			$('.additives_item').removeClass('added');
+			$('.product_card--adds_price span').text(0);
+
+			if($this.data().size == 'small'){
+				totalPriceContainer.text(prices[0]);
+			}
+			else {
+				totalPriceContainer.text(prices[1]);
+			}
+		}
+
+		
+	});
+
+	// Additives
+	$('.additives_item').on('click', function(){
+		var $this = $(this);
+		var sumContainer = $('.product_card--adds_price span');
+		//var currentTotalPrice = +totalPriceContainer.text();
+		var currentSum = +sumContainer.text();
+		var sum = +$this.data().price;
+		var id = $this.data().id;
+		//console.log(id);
+		
+		var added = 'added';
+		var label = $this.find('.label_added');
+		if($this.hasClass('added')){
+			console.log('Убрали добавку');
+			//console.log(currentSum);
+			//console.log(sum);
+			//console.log(getAddsTotalPrice());
+			var localSum = currentSum - sum;
+			$('.product_card--added_item')[id].classList.remove('shown');
+			$this.removeClass(added);
+			sumContainer.text(localSum);
+			console.log(-sum);
+
+			setProductTotalPrice(-sum);
+		}
+		else {
+			console.log('Добавили добавку');
+			var localSum = currentSum + sum;
+			$('.product_card--added_item')[id].classList.add('shown');
+			$this.addClass(added);
+			label.addClass('visible');
+			sumContainer.text(localSum);
+			//console.log(getProductTotalPrice());
+			console.log(getAddsTotalPrice());
+			setProductTotalPrice(sum);
+			setTimeout(function(){
+				label.removeClass('visible');
+			}, 2000);
+		}
+	});
+
+	// Product Card remove additives
+	$('.product_card--added_item i').on('click', function(){
+		var item = $(this).parent();
+		var id = item.data().id
+		item.removeClass('shown');
+		$('.additives_item')[id].classList.remove('added');
+	});
+
+	// Custom Select
+	$('.product_card--promo_dropdown').on('click', function(e){
+		var $this = $(this);
+		var title = $this.find(('.product_card--promo_value'));
+		var list = $(this).find('.product_card--promo_list');
+		function slideUpFunc() {
+			$this.find('.product_card--promo_list').slideUp(500, function(){
+				$this.removeClass('opened');
+			});
+		}
+		if (e.target.classList.contains('product_card--promo_value') || e.target.classList.contains('arrow')) {
+			if(list.is(':visible')){
+				slideUpFunc();
+			}
+			else {
+				$this.addClass('opened');
+				$this.find('.product_card--promo_list').slideDown(500);
+			}
+		}
+		else {
+			var value = e.target.textContent;
+			title.text(value);
+			$('#promo').val(value);
+			slideUpFunc();
+		}
+	});
+
 	// Product item add to cart
-	$('.btn_plus').on('click', function() {
+	$('.btn_plus').on('click', function(e) {
+		// var prices = $this.parent().data().price;
+		// var totalPriceContainer = $('#product_total_price');
+		// var currentSum = +totalPriceContainer.text();
+		// var diff = prices[1] - prices[0];
+
+
 		var input = $(this).siblings('input');
 		var current = +input.val();
 		var $this = $(this);
 		$this.siblings('input').val(current + 1);
 		$this.siblings('.btn_minus').removeClass('disabled');
+		if($(e.target).hasClass('btn_plus_product_card')) {
+			var prices = $('.product_card--size').data().price;
+			if($('.product_card--size_btn.active').data().size == 'small'){
+				setProductTotalPrice(prices[0] + getAddsTotalPrice());
+			}
+			else {
+				setProductTotalPrice(prices[1] + getAddsTotalPrice());
+			}
+			
+		}
 	});
 
-	$('.btn_minus').on('click', function() {
+	$('.btn_minus').on('click', function(e) {
 		var input = $(this).siblings('input');
 		var current = +input.val();
 		if(current > 2) {
 			$(this).siblings('input').val(current - 1);
+			if($(e.target).hasClass('btn_minus_product_card')) {
+				//console.log(getProductTotalPrice());
+			}
 		}
 		else {
 			$(this).addClass('disabled');
@@ -37,6 +181,33 @@ $(document).ready(function() {
 		$this.addClass('invisible');
 		$this.closest('.product_item').find('.added_to_cart').addClass('visible');
 	});
+
+	$('#productForm').on('submit', function(e){
+		e.preventDefault();
+		var form = $(this);
+		$('.additives_item').removeClass('added');
+		form.trigger("reset");
+		$('.product_card--adds_price span').text(0);
+		$('#product_total_price').text($('.product_card--size').data().price[0]);
+		
+		$('.product_card--size_btn').removeClass('active');
+		$('.product_card--size_btn')[0].classList.add('active');
+
+		$.ajax({
+			type: form.attr('method'),
+			url: form.attr('action'),
+			data: form.serialize()
+		  }).done(function() {
+			console.log('Data sent');
+			$('.additives_item').removeClass('added');
+			form.trigger("reset");
+		  }).fail(function() {
+			console.error('Data sending failed');
+		  });
+	});
+
+
+	
 
 
 	
@@ -83,7 +254,7 @@ $(document).ready(function() {
 
 
 	
-
+	// scroll to ID
 	$('.scroll').click( function(){
 	var scrollEl = $(this).attr('href');
 		if ($(scrollEl).length != 0) {
