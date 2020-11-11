@@ -29,8 +29,6 @@ $(document).ready(function() {
 		var $this = $(this);
 		var prices = $this.parent().data().price;
 		var totalPriceContainer = $('#product_total_price');
-		//var currentSum = +totalPriceContainer.text();
-		//var diff = prices[1] - prices[0];
 		
 		if($this.hasClass('active')){
 			return false;
@@ -39,9 +37,6 @@ $(document).ready(function() {
 			$('.product_card--size_btn').removeClass('active');
 			$this.addClass('active');
 			$('.product_card--quantity .quantity input').val(1);
-			//setProductTotalPrice(1);
-			//totalPriceContainer.text(1);
-
 			$('#size').val($this.find('.product_size').text());
 			$('#weight').val($this.find('.product_weight').text());
 
@@ -64,36 +59,24 @@ $(document).ready(function() {
 	$('.additives_item').on('click', function(){
 		var $this = $(this);
 		var sumContainer = $('.product_card--adds_price span');
-		//var currentTotalPrice = +totalPriceContainer.text();
 		var currentSum = +sumContainer.text();
 		var sum = +$this.data().price;
 		var id = $this.data().id;
-		//console.log(id);
-		
 		var added = 'added';
 		var label = $this.find('.label_added');
 		if($this.hasClass('added')){
-			console.log('Убрали добавку');
-			//console.log(currentSum);
-			//console.log(sum);
-			//console.log(getAddsTotalPrice());
 			var localSum = currentSum - sum;
 			$('.product_card--added_item')[id].classList.remove('shown');
 			$this.removeClass(added);
 			sumContainer.text(localSum);
-			console.log(-sum);
-
 			setProductTotalPrice(-sum);
 		}
 		else {
-			console.log('Добавили добавку');
 			var localSum = currentSum + sum;
 			$('.product_card--added_item')[id].classList.add('shown');
 			$this.addClass(added);
 			label.addClass('visible');
 			sumContainer.text(localSum);
-			//console.log(getProductTotalPrice());
-			console.log(getAddsTotalPrice());
 			setProductTotalPrice(sum);
 			setTimeout(function(){
 				label.removeClass('visible');
@@ -147,9 +130,7 @@ $(document).ready(function() {
 		var input = $(this).siblings('input');
 		var current = +input.val() + 1;
 		var $this = $(this);
-		//console.log(current);
 		input.val(current);
-		//console.log(current);
 		$this.siblings('.btn_minus').removeClass('disabled');
 		if($(e.target).hasClass('btn_plus_product_card')) {
 			var prices = $('.product_card--size').data().price;
@@ -198,32 +179,20 @@ $(document).ready(function() {
 			adds.push(el.textContent);
 		});
 		$('#additivesInput').val(adds);
-		///////////////////////////////////////
-		// $('.additives_item').removeClass('added');
-		// form.trigger("reset");
-		// $('.product_card--adds_price span').text(0);
-		// $('#product_total_price').text($('.product_card--size').data().price[0]);
-		
-		// $('.product_card--size_btn').removeClass('active');
-		// $('.product_card--size_btn')[0].classList.add('active');
-		//window.location.href = "/thanks.html";
-		////////////////////////////////////////
+
 		$.ajax({
 			type: form.attr('method'),
 			url: form.attr('action'),
 			data: form.serialize()
-		  }).done(function(serverData) { // в случае успеха
-			$('.additives_item').removeClass('added'); // я очищаю все добавки
-			form.trigger('reset'); // резетну форму
+		  }).done(function(serverData) {
+			$('.additives_item').removeClass('added');
+			form.trigger('reset');
 			$('.product_card--adds_price span').text(0);
 			$('#product_total_price').text($('.product_card--size').data().price[0]);
 			$('.product_card--size_btn').removeClass('active');
 			$('.product_card--size_btn')[0].classList.add('active');
-			console.log(serverData); // твой ответ от сервера. Передай мне его тоже в json
-									 // тут по ходу будут данные для корзины (общая сумма, айди товара и прочая хуйня)
-									 // и тут же я буду делать редирект на страницу благодарности что-то типа такого:
-									 window.location.href = "/thanks.html";
-									 // но мне надо знать на каком языке мы находимся, чтоб переправлять на нужную страницу благодарности
+			console.log(serverData);
+			window.location.href = "/thanks.html";
 		  }).fail(function() {
 			console.error('Data sending failed');
 		  });
@@ -311,21 +280,58 @@ $(document).ready(function() {
 		slidesToScroll: 1,
 		nextArrow: '.next',
 		prevArrow: '.prev',
-		//autoplay: true
-		// focusOnSelect: true,
-		// appendDots: '.review .nav_slider',
-		// customPaging: function(slider, i) {
-		// 	return '<div class="dot"></div>';
-		// },
-		// responsive: [
-		// 	{
-		// 	breakpoint: 992,
-		// 	settings: {
-		// 		slidesToShow: 3
-		// 	}
-		// 	}
-		// ]
+		autoplay: true,
+		pauseOnHover: true,
+		responsive: [
+			{
+				breakpoint: 768,
+				settings: {
+					arrows: false,
+					dots: true
+				}
+			}
+		]
 	});
+
+	$('.often_slider').slick({
+		slidesToShow: 4,
+		slidesToScroll: 1,
+		nextArrow: '.next',
+		prevArrow: '.prev',
+		//autoplay: true,
+		pauseOnHover: true,
+		responsive: [
+			{
+				breakpoint: 1200,
+				settings: {
+					slidesToShow: 3
+				}
+			},
+			{
+				breakpoint: 992,
+				settings: {
+					slidesToShow: 2
+				}
+			},
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 2,
+					arrows: false,
+					dots: true
+				}
+			},
+			{
+				breakpoint: 580,
+				settings: {
+					slidesToShow: 1,
+					arrows: false,
+					dots: true
+				}
+			}
+		]
+	});
+
 
 	/*
 	//video player + button
