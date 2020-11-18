@@ -1,7 +1,3 @@
-// if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-//   $('.viewport').attr('content', 'width=1300');
-// }
-
 $(document).ready(function() {
 	// remove placeholder after click
 	$('input, textarea').focus(function(){
@@ -12,6 +8,50 @@ $(document).ready(function() {
 		$(this).attr('placeholder', $(this).data('placeholder'));
 	});
 
+	function getScroll() {
+		return window.pageYOffset || document.documentElement.scrollTop;
+	}
+
+	function changeLogoSize() {
+		if(getScroll() > 0) {
+			$('.logo').addClass('scrolled');
+		}
+		else {
+			$('.logo').removeClass('scrolled');
+		}
+	}
+
+	// Fixed Header
+	$(window).on('scroll', function(){
+		changeLogoSize()
+	});
+	$(window).on('load', function(){
+		changeLogoSize();
+		setCardPrice();
+	});
+
+	// Burger
+	$('.phone_icon').on('click', function(){
+		var phone = $('.phone_menu');
+		if(phone.is(':visible')){
+			phone.fadeOut();
+		}
+		else {
+			phone.fadeIn();
+		}
+	});
+
+	$('.burger').on('click', function(){
+		$('body').addClass('fixed');
+		$('.mobile_menu_overlay').fadeIn();
+	});
+
+	$('.close').on('click', function(){
+		$('body').removeClass('fixed');
+		$('.mobile_menu_overlay').fadeOut();
+	});
+
+	// Price Calc
 	function getAddsTotalPrice(){
 		return +$('.product_card--adds_price span').text();
 	}
@@ -24,11 +64,44 @@ $(document).ready(function() {
 		$('#product_total_price').text(+getProductTotalPrice() + value);
 	}
 
+	function getArraySum(array){
+		var sum = 0;
+		for(var i = 0; i < array.length; i++){
+			sum += array[i];
+		}
+		return sum;
+	}
+
+	function setCardPrice() {
+		var prices = $('.card_total--table_column span.row_price');
+		var arr = [];
+		prices.each(function() {
+			arr.push(+this.textContent);
+		});
+		console.log(getArraySum(arr));
+		$('#total_price').text(getArraySum(arr));
+		$('#totalPrice').text(getArraySum(arr));
+	}
+	
+	function setRowPrice($this, sign){
+		var currentPrice = +$this.closest('.card_total--table_item').find('.card_total--table_column span.row_price').text();
+		var itemPrice = +$this.closest('.card_total--table_item').find('.card_total--table_column span.item_price').text();
+		$this.closest('.card_total--table_item').find('.card_total--table_column span.row_price').text(currentPrice + sign * itemPrice);
+	}
+
+	function setCardTotalPrice(value) {
+		// var prices = +$('.card_total--table_column span.row_price').text();
+		// //console.log(prices);
+		// var $this = $('.card_total--table_footer h5 span');
+		// $this.text(+$this.text() + value);
+	}
+
 	// Product Size Selection
 	$('.product_card--size_btn').on('click', function(){
 		var $this = $(this);
 		var prices = $this.parent().data().price;
-		var totalPriceContainer = $('#product_total_price');
+		var diff = prices[1] - prices[0];
+		var quantity = $('.product_card--quantity .quantity input').val();
 		
 		if($this.hasClass('active')){
 			return false;
@@ -36,19 +109,15 @@ $(document).ready(function() {
 		else {
 			$('.product_card--size_btn').removeClass('active');
 			$this.addClass('active');
-			$('.product_card--quantity .quantity input').val(1);
+			//$('.product_card--quantity .quantity input').val(1);
 			$('#size').val($this.find('.product_size').text());
 			$('#weight').val($this.find('.product_weight').text());
 
-			$('.product_card--added_item').removeClass('shown');
-			$('.additives_item').removeClass('added');
-			$('.product_card--adds_price span').text(0);
-
 			if($this.data().size == 'small'){
-				totalPriceContainer.text(prices[0]);
+				setProductTotalPrice(-diff * quantity);
 			}
 			else {
-				totalPriceContainer.text(prices[1]);
+				setProductTotalPrice(diff * quantity);
 			}
 		}
 
@@ -141,11 +210,18 @@ $(document).ready(function() {
 				setProductTotalPrice(prices[1] + getAddsTotalPrice());
 			}
 		}
+		if($(e.target).hasClass('btn_plus_card')) {
+			setRowPrice($(this), 1);
+			setCardPrice();
+		}
 	});
+
+	
 
 	$('.btn_minus').on('click', function(e) {
 		var input = $(this).siblings('input');
 		var current = +input.val() - 1;
+		
 		if(current >= 1) {
 			input.val(current);
 			if($(e.target).hasClass('btn_minus_product_card')) {
@@ -159,9 +235,16 @@ $(document).ready(function() {
 			}
 		}
 		if(current == 1) {
-			console.log(current);
 			$(this).addClass('disabled');
 			$(this).siblings('input').val(1);
+		}
+
+		if($(e.target).hasClass('btn_minus_card')) {
+			if(current < 1) {
+				$(this).closest('.card_total--table_item').remove();
+			}
+			setRowPrice($(this), -1);
+			setCardPrice();
 		}
 	});
 	$('.btn_main_product').on('click', function() {
@@ -199,53 +282,142 @@ $(document).ready(function() {
 	});
 
 
-	
+	// Card
+	$('.card_total .delete').on('click', function(){
+		$(this).closest('.card_total--table_item').remove();
+		setCardPrice();
+	});
 
+	// Card Form Radio Input
+	$('.card_form .radio_input').on('change', function(){
+		var $this = $(this);
+		var subinput = $this.siblings('.subinput');
+		$this.closest('.row').find('.radio_input').removeClass('checked');
+		$this.addClass('checked');
 
-	
+		if(!$this.hasClass('subradio')){
+			if($this.hasClass('checked')){
+				$this.closest('.row').find('.subinput').slideUp();
+				subinput.slideDown();
+			}
+		}
+		else {
+			$this.closest('.row').find('.radio_main').addClass('checked');
+		}
+	});
 
-// 	function updater(d, h, m, s) {
-// 	  // День сброса - 5 августа 2017 года (и далее каждые три дня)
-// 	  var baseTime = new Date(2017, 07, 8);
-// 	  // Период сброса — 3 дня
-// 	  var period = 2*24*60*60*1000;
+	$('.card_total')
 
-// 	  function update() {
-// 	    var cur = new Date();
-// 	    // сколько осталось миллисекунд
-// 	    var diff = period - (cur - baseTime) % period;
-// 	    // сколько миллисекунд до конца секунды
-// 	    var millis = diff % 1000;
-// 	    diff = Math.floor(diff/1000);
-// 	    // сколько секунд до конца минуты
-// 	    var sec = diff % 60;
-// 	    if(sec < 10) sec = "0"+sec;
-// 	    diff = Math.floor(diff/60);
-// 	    // сколько минут до конца часа
-// 	    var min = diff % 60;
-// 	    if(min < 10) min = "0"+min;
-// 	    diff = Math.floor(diff/60);
-// 	    // сколько часов до конца дня
-// 	    var hours = diff % 24;
-// 	    if(hours < 10) hours = "0"+hours;
-// 	    var days = Math.floor(diff / 24);
-// 	    d.innerHTML = days;
-// 	    h.innerHTML = hours;
-// 	    m.innerHTML = min;
-// 	    s.innerHTML = sec;
-	  
-// 	    // следующий раз вызываем себя, когда закончится текущая секунда
-// 	    setTimeout(update, millis);
-// 	  }
-// 	  setTimeout(update, 0);
-// 	}
-// 	updater(document.getElementById("days"),
-// document.getElementById("hours"), document.getElementById("minutes"),
-// document.getElementById("seconds"));
+	// Card Ajax
+	function submitForm(form){
+		var form = $(form);
+		$('#totalPrice').val($('#product_total_price').text());
+		var adds = [];
+		$('.product_card--added_item.shown span').each(function(index, el){
+			adds.push(el.textContent);
+		});
+		$('#additivesInput').val(adds);
+		
+		$('#totalSum').val($('#totalPrice').text() + 'грн');
+		console.log(form.serialize());
+		//console.log(isFormValid().errorList);
+		$.ajax({
+			type: form.attr('method'),
+			url: form.attr('action'),
+			data: form.serialize()
+			}).done(function(serverData) {
+			$('.additives_item').removeClass('added');
+			form.trigger('reset');
+			$('.product_card--adds_price span').text(0);
+			$('#product_total_price').text($('.product_card--size').data().price[0]);
+			$('.product_card--size_btn').removeClass('active');
+			$('.product_card--size_btn')[0].classList.add('active');
+			console.log(serverData);
+			window.location.href = "/thanks.html";
+			}).fail(function() {
+			console.error('Data sending failed');
+		});
+	}
 
+	// Validation
+	var locationURL = window.location.search;
+	if ( locationURL == "?p=179&lang=ua" ) {
+		var validationName = "Обов'язково для заповнення";
+		var validationNameMax = "Від 2 до 16 літер";
+		var validationPhone = "Введіть вірний номер";
+		var validationEmail = "Введіть вірний E-mail";
+		var validationRadio = "Выберите вариант";
+	}
+	else {
+		var validationName = "Обязательно для заполнения";
+		var validationNameMax = "От 2 до 16 букв";
+		var validationPhone = "Введите корректный номер";
+		var validationEmail = "Введите корректный E-mail";
+		var validationRadio = "Выберите вариант";
+	}
 
+	$('#cardForm').validate({
+		submitHandler: function(form, e) {
+			submitForm(form);
+		}, 
+		rules: {
+			name: {
+				required: true,
+				minlength: 2,
+				maxlength: 16
+			},
+			phone: {
+				required: true
+			},
+			delivery: {
+				required: true
+			},
+			payment: {
+				required: true
+			},
+			street: {
+				required: true
+			},
+			house: {
+				required: true
+			},
+			entrance: {
+				required: true
+			},
+			selfdelivery: {
+				required: true
+			}
+		},
+		messages: {
+			name: {
+				required: validationName,
+				minlength: validationNameMax,
+				maxlength: validationNameMax
+			},
+			phone: {
+				required: validationPhone
+			},
+			delivery: {
+				required: validationRadio
+			},
+			payment: {
+				required: validationRadio
+			},
+			street: {
+				required: validationName
+			},
+			house: {
+				required: validationName
+			},
+			entrance: {
+				required: validationName
+			},
+			selfdelivery: {
+				required: validationRadio
+			},
+		}
+	});
 
-	
 	// scroll to ID
 	$('.scroll').click( function(){
 	var scrollEl = $(this).attr('href');
@@ -255,26 +427,12 @@ $(document).ready(function() {
 		return false;
 	});
 
-
-	//popup
-	$('.popup').magnificPopup({
-		type: 'inline'
-	});
-	
-	// photo magnific gallery
-	$('.photo_popup').magnificPopup({
-		type: 'image',
-		gallery: {
-			enabled: true
-		}
-	});
-
-	//mask
+	// mask
 	jQuery(function($){
-		$('.phone').mask('+38(099) 999-9999');
+		$('#phone').mask('+38(099) 999-9999');
 	});
 
-	//slick carousel
+	// slick carousel
 	$('.main_slider').slick({
 		slidesToShow: 1,
 		slidesToScroll: 1,
@@ -298,7 +456,7 @@ $(document).ready(function() {
 		slidesToScroll: 1,
 		nextArrow: '.next',
 		prevArrow: '.prev',
-		//autoplay: true,
+		autoplay: true,
 		pauseOnHover: true,
 		responsive: [
 			{
@@ -332,81 +490,38 @@ $(document).ready(function() {
 		]
 	});
 
-
-	/*
-	//video player + button
-	$('#mainVideo').click(function(){
-		if (this.paused) {
-			this.play();
-			$('#videoButton').fadeOut('fast');
-		} else {
-			$('#videoButton').fadeIn('fast');
-			this.pause();
-		}
-	});
-	$('#videoButton').on('click', function(event) {
-		event.preventDefault();
-		$('#videoButton').fadeOut('fast');
-		$('#mainVideo').get(0).play();
-	});
-	*/
-
-	/*
-	//validation
-		var locationURL = window.location.search;
-	if ( locationURL == "?p=179&lang=ua" ) {
-		var validationName = "Обов'язково для заповнення";
-		var validationNameMax = "Від 2 до 16 літер";
-		var validationPhone = "Введіть вірний номер";
-		var validationEmail = "Введіть вірний E-mail";
-	}
-	else {
-		var validationName = "Обязательно для заполнения";
-		var validationNameMax = "От 2 до 16 букв";
-		var validationPhone = "Введите корректный номер";
-		var validationEmail = "Введите корректный E-mail";
-	}
-
-
-	$('#topForm').validate({
-		rules: {
-			name: {
-				required: true,
-				minlength: 2,
-				maxlength: 16
+	$('.review_slider').slick({
+		slidesToShow: 4,
+		slidesToScroll: 1,
+		nextArrow: '.next',
+		prevArrow: '.prev',
+		autoplay: true,
+		pauseOnHover: true,
+		responsive: [
+			{
+				breakpoint: 1200,
+				settings: {
+					slidesToShow: 3
+				}
 			},
-			email: {
-				required: true,
-				email: true
+			{
+				breakpoint: 992,
+				settings: {
+					slidesToShow: 3
+				}
 			},
-			phone: {
-				required: true
+			{
+				breakpoint: 768,
+				settings: {
+					slidesToShow: 2
+				}
+			},
+			{
+				breakpoint: 580,
+				settings: {
+					slidesToShow: 1
+				}
 			}
-		},
-		messages: {
-			name: {
-				required: validationName,
-				minlength: validationNameMax,
-				maxlength: validationNameMax
-			},
-			email: {
-				required: validationName,
-				email: validationEmail
-			},
-			phone: {
-				required: validationPhone
-			}
-		}
+		]
 	});
-
-	*/
-
-
 });
-/*
-// preloader
-$(window).load(function(){
-	$('.preloader_inner').fadeOut();
-	$('.preloader').delay(100).fadeOut('fast');
-});
-*/
