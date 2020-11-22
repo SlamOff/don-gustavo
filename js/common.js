@@ -78,7 +78,7 @@ $(document).ready(function() {
 		prices.each(function() {
 			arr.push(+this.textContent);
 		});
-		console.log(getArraySum(arr));
+		//console.log(getArraySum(arr));
 		$('#total_price').text(getArraySum(arr));
 		$('#totalPrice').text(getArraySum(arr));
 	}
@@ -97,6 +97,24 @@ $(document).ready(function() {
 	}
 
 	// Product Size Selection
+	$('.size_btn').on('click', function(e) {
+		e.preventDefault();
+		var $this = $(this);
+		var sizes = $this.closest('.product_item').data().weight;
+		if(sizes.length > 1){
+			var weightNode = $this.parent().siblings('.product_item--weight').find('span.weight');
+			$this.siblings('span').removeClass('active');
+			$this.addClass('active');
+			if($this.hasClass('second_size')){
+				weightNode.text(sizes[1]);
+			}
+			else {
+				weightNode.text(sizes[0]);
+			}
+		}
+		
+	});
+	
 	$('.product_card--size_btn').on('click', function(){
 		var $this = $(this);
 		var prices = $this.parent().data().price;
@@ -127,6 +145,8 @@ $(document).ready(function() {
 	// Additives
 	$('.additives_item').on('click', function(){
 		var $this = $(this);
+		var quantity = +$('.quantity input').val();
+
 		var sumContainer = $('.product_card--adds_price span');
 		var currentSum = +sumContainer.text();
 		var sum = +$this.data().price;
@@ -134,19 +154,21 @@ $(document).ready(function() {
 		var added = 'added';
 		var label = $this.find('.label_added');
 		if($this.hasClass('added')){
-			var localSum = currentSum - sum;
+			var localSum = currentSum - sum * quantity;
+			console.log(localSum);
 			$('.product_card--added_item')[id].classList.remove('shown');
 			$this.removeClass(added);
 			sumContainer.text(localSum);
-			setProductTotalPrice(-sum);
+			setProductTotalPrice(-sum * quantity);
 		}
 		else {
-			var localSum = currentSum + sum;
+			var localSum = currentSum + sum * quantity;
+			console.log(localSum);
 			$('.product_card--added_item')[id].classList.add('shown');
 			$this.addClass(added);
 			label.addClass('visible');
 			sumContainer.text(localSum);
-			setProductTotalPrice(sum);
+			setProductTotalPrice(sum * quantity);
 			setTimeout(function(){
 				label.removeClass('visible');
 			}, 2000);
@@ -155,6 +177,7 @@ $(document).ready(function() {
 
 	// Product Card remove additives
 	$('.product_card--added_item i').on('click', function(){
+		var quantity = +$('.quantity input').val();
 		var addsContainer = $('.product_card--adds_price span');
 		var addsCurrentPrice = +addsContainer.text();
 		var item = $(this).parent();
@@ -162,9 +185,8 @@ $(document).ready(function() {
 		var currentPrice = +$('.additives_item')[id].dataset.price;
 		item.removeClass('shown');
 		$('.additives_item')[id].classList.remove('added');
-		addsContainer.text(addsCurrentPrice - currentPrice);
-		setProductTotalPrice(-currentPrice);
-		
+		addsContainer.text(addsCurrentPrice - currentPrice * quantity);
+		setProductTotalPrice(-currentPrice * quantity);
 	});
 
 	// Custom Select
@@ -200,15 +222,23 @@ $(document).ready(function() {
 		var current = +input.val() + 1;
 		var $this = $(this);
 		input.val(current);
-		$this.siblings('.btn_minus').removeClass('disabled');
+		
 		if($(e.target).hasClass('btn_plus_product_card')) {
+			$this.siblings('.btn_minus').removeClass('disabled');
 			var prices = $('.product_card--size').data().price;
+			var addsPrices = [];
+			//var currentAdsPrice = +$('.product_card--adds_price span').text();
+			$('.additives_item.added').each(function(i, e){
+				addsPrices.push(+e.dataset.price);
+			});
+			
 			if($('.product_card--size_btn.active').data().size == 'small'){
 				setProductTotalPrice(prices[0] + getAddsTotalPrice());
 			}
 			else {
 				setProductTotalPrice(prices[1] + getAddsTotalPrice());
 			}
+			$('.product_card--adds_price span').text(getArraySum(addsPrices) * current);
 		}
 		if($(e.target).hasClass('btn_plus_card')) {
 			setRowPrice($(this), 1);
@@ -219,13 +249,20 @@ $(document).ready(function() {
 	
 
 	$('.btn_minus').on('click', function(e) {
-		var input = $(this).siblings('input');
+		var $this = $(this);
+		var input = $this.siblings('input');
 		var current = +input.val() - 1;
-		
+		var addsPrices = [];
+
 		if(current >= 1) {
 			input.val(current);
 			if($(e.target).hasClass('btn_minus_product_card')) {
 				var prices = $('.product_card--size').data().price;
+				//var currentAdsPrice = +$('.product_card--adds_price span').text();
+				$('.additives_item.added').each(function(i, e){
+					addsPrices.push(+e.dataset.price);
+				});
+				$('.product_card--adds_price span').text(getArraySum(addsPrices) * current);
 				if($('.product_card--size_btn.active').data().size == 'small'){
 					setProductTotalPrice(-(prices[0] + getAddsTotalPrice()));
 				}
@@ -235,15 +272,21 @@ $(document).ready(function() {
 			}
 		}
 		if(current == 1) {
+			$this.siblings('input').val(1);
+		}
+		if(current == 1 && $(e.target).hasClass('btn_minus_product_card')){
 			$(this).addClass('disabled');
-			$(this).siblings('input').val(1);
+		}
+		if(current < 1) {
+			$this.parent().siblings('.btn_main_product').removeClass('invisible');
+			$this.closest('.product_item').find('.added_to_cart').removeClass('visible');
 		}
 
 		if($(e.target).hasClass('btn_minus_card')) {
 			if(current < 1) {
-				$(this).closest('.card_total--table_item').remove();
+				$this.closest('.card_total--table_item').remove();
 			}
-			setRowPrice($(this), -1);
+			setRowPrice($this, -1);
 			setCardPrice();
 		}
 	});
@@ -384,6 +427,9 @@ $(document).ready(function() {
 			entrance: {
 				required: true
 			},
+			apartment: {
+				required: true
+			},
 			selfdelivery: {
 				required: true
 			}
@@ -410,6 +456,9 @@ $(document).ready(function() {
 				required: validationName
 			},
 			entrance: {
+				required: validationName
+			},
+			apartment: {
 				required: validationName
 			},
 			selfdelivery: {

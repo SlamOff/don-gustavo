@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8" />
-	<title>Project Name</title>
+	<title>Доставка пиццы из ресторана «Дон Густаво» в Черновцах</title>
+	<meta name="description" content="Бесплатная доставка пиццы, суши, салатов и напитков по Черновцам из ресторана «Дон Густаво»">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 	<meta class="viewport" name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
 	<link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
@@ -69,8 +70,8 @@
 			</div>
 			<div class="mobile_phone">
 				<h6>Телефон для онлайн заказа:</h6>
-				<a href="tel:+380666266808">+38 066 626 68 08</a>
-				<a href="tel:+380666757185">+38 066 675 71 85</a>
+				<a onclick="gtag('event', 'tel1');" href="tel:+380666266808">+38 066 626 68 08</a>
+				<a onclick="gtag('event', 'tel2');" href="tel:+380666757185">+38 066 675 71 85</a>
 			</div>
 			
 		</div>
@@ -82,10 +83,14 @@
 		<div class="container">
 			<div class="header_wrapper">
 				<div class="logo">
-					<img src="img/logo.jpg" alt="">
+					<a href="/"><img src="img/logo.jpg" alt=""></a>
 				</div>
 				<div class="phone_icon">
 					<img src="img/phone.png" alt="">
+					<div class="phone_menu">
+						<a onclick="gtag('event', 'tel1');" href="tel:+380666266808">+38 066 626 68 08</a>
+						<a onclick="gtag('event', 'tel2');" href="tel:+380666757185">+38 066 675 71 85</a>
+					</div>
 				</div>
 				<div class="descr">Бесплатная доставка пиццы, суши, салатов <br />и напитков по Черновцам из ресторана «Дон Густаво»</div>
 				<ul class="lang">
@@ -98,17 +103,13 @@
 				</div>
 				<div class="phone">
 					<h6>Телефон для онлайн заказа</h6>
-					<a href="tel:+380666266808">+38 066 626 68 08</a>
-					<a href="tel:+380666757185">+38 066 675 71 85</a>
+					<a onclick="gtag('event', 'tel1');" href="tel:+380666266808">+38 066 626 68 08</a>
+					<a onclick="gtag('event', 'tel2');" href="tel:+380666757185">+38 066 675 71 85</a>
 				</div>
 				<div class="burger">
 					<span></span>
 					<span></span>
 					<span></span>
-				</div>
-				<div class="phone_menu">
-					<a href="tel:+380666266808">+38 066 626 68 08</a>
-					<a href="tel:+380666757185">+38 066 675 71 85</a>
 				</div>
 			</div>
 		</div>
@@ -161,22 +162,27 @@
 	<!-- END Menu-->
 
 	<!-- BEGIN  Main Slider -->
-	<div class="slider_wrapper main_slider_wrapper">
-		<div class="main_slider">
-			<img src="img/main-slider-1.jpg" alt="">
-			<img src="img/main-slider-1.jpg" alt="">
-			<img src="img/main-slider-1.jpg" alt="">
-			<img src="img/main-slider-1.jpg" alt="">
-		</div>
-		<div class="container main_slider_container">
-			<a href="/" class="btn_main">Подробнее</a>
-			<div class="arrows">
-				<div class="prev"></div>
-				<div class="next"></div>
+	<div class="main_banner">
+		<div class="slider_wrapper main_slider_wrapper">
+			<div class="main_slider">
+				<img src="img/main-slider-1.jpg" alt="">
+				<img src="img/main-slider-2.jpg" alt="">
+				<img src="img/main-slider-3.jpg" alt="">
+				<img src="img/main-slider-4.jpg" alt="">
+				<img src="img/main-slider-5.jpg" alt="">
+				<img src="img/main-slider-6.jpg" alt="">
+				<img src="img/main-slider-7.jpg" alt="">
+			</div>
+			<div class="container main_slider_container">
+				<a href="/" class="btn_main">Подробнее</a>
+				<div class="arrows">
+					<div class="prev"></div>
+					<div class="next"></div>
+				</div>
 			</div>
 		</div>
-		
 	</div>
+	
 	<!-- END  Main Slider -->
 
 	<!-- Begin Work Time-->
@@ -208,19 +214,18 @@
 			<div class="row">
 				<!-- BEGIN Product Item -->
 				<div class="col-sm-6 col-md-4">
-					<div class="product_item">
+					<div class="product_item" data-weight="[750, 1000]">
 						<a href="/">
 							<h4 class="product_item--name">Black pizza</h4>
 							<div class="product_item--pict">
 								<div class="added_to_cart"><img src="img/shopping-cart.png" alt=""></div>
 								<img class="product-image" src="img/product-1.jpg" alt="">
-								<div class="product_item--weight">Вес:&nbsp;<span>750</span>&nbsp;г</div>
-								<div class="product_item--size"><span>30</span>&nbsp;см</div>
+								<div class="product_item--weight"><span>Вес:&nbsp;<span class="weight">750</span>&nbsp;г</span></div>
+								<div class="product_item--size has_choice"><span class="size_btn active"><i>30</i>&nbsp;см</span>&nbsp;&nbsp;&nbsp;&nbsp;<span class="size_btn second_size"><i>&nbsp;40</i>&nbsp;см</span></span></div>
 							</div>
 						</a>
 						<div class="product_item--footer">
 							<div class="product_item--descr">
-								<div class="product_item--info-btn"></div>
 								<p>Креветки, сыр дор блю, сыр, моцарелла, белый соус.</p>
 								<a href="/">Добавить компоненты>>></a>
 							</div>
@@ -228,11 +233,11 @@
 								<div class="price"><span>215</span>&nbsp;грн</div>
 								<div class="choose">
 									<div class="quantity">
-										<div class="btn_minus btn_action disabled">-</div>
+										<div class="btn_minus btn_action">-</div>
 										<input disabled type="text" value="1" name="quantity">
 										<div class="btn_plus btn_action">+</div>
 									</div>
-									<button href="" class="btn_main btn_main_product">В корзину</button>
+									<button class="btn_main btn_main_product">В корзину</button>
 								</div>
 							</div>
 						</div>
@@ -240,175 +245,7 @@
 				</div>
 				<!-- END Product Item -->
 
-				<!-- BEGIN Product Item -->
-				<div class="col-sm-6 col-md-4">
-					<div class="product_item">
-						<a href="/">
-							<h4 class="product_item--name">Black pizza</h4>
-							<div class="product_item--pict">
-								<div class="added_to_cart"><img src="img/shopping-cart.png" alt=""></div>
-								<img class="product-image" src="img/product-1.jpg" alt="">
-								<div class="product_item--weight">Вес:&nbsp;<span>750</span>&nbsp;г</div>
-								<div class="product_item--size"><span>30</span>&nbsp;см</div>
-							</div>
-						</a>
-						<div class="product_item--footer">
-							<div class="product_item--descr">
-								<div class="product_item--info-btn"></div>
-								<p>Креветки, сыр дор блю, сыр, моцарелла, белый соус.</p>
-								<a href="/">Добавить компоненты>>></a>
-							</div>
-							<div class="product_item--price">
-								<div class="price"><span>215</span>&nbsp;грн</div>
-								<div class="choose">
-									<div class="quantity">
-										<div class="btn_minus btn_action disabled">-</div>
-										<input disabled type="text" value="1" name="quantity">
-										<div class="btn_plus btn_action">+</div>
-									</div>
-									<button href="" class="btn_main btn_main_product">В корзину</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- END Product Item -->
-
-				<!-- BEGIN Product Item -->
-				<div class="col-sm-6 col-md-4">
-					<div class="product_item">
-						<a href="/">
-							<h4 class="product_item--name">Black pizza</h4>
-							<div class="product_item--pict">
-								<div class="added_to_cart"><img src="img/shopping-cart.png" alt=""></div>
-								<img class="product-image" src="img/product-1.jpg" alt="">
-								<div class="product_item--weight">Вес:&nbsp;<span>750</span>&nbsp;г</div>
-								<div class="product_item--size"><span>30</span>&nbsp;см</div>
-							</div>
-						</a>
-						<div class="product_item--footer">
-							<div class="product_item--descr">
-								<div class="product_item--info-btn"></div>
-								<p>Креветки, сыр дор блю, сыр, моцарелла, белый соус.</p>
-								<a href="/">Добавить компоненты>>></a>
-							</div>
-							<div class="product_item--price">
-								<div class="price"><span>215</span>&nbsp;грн</div>
-								<div class="choose">
-									<div class="quantity">
-										<div class="btn_minus btn_action disabled">-</div>
-										<input disabled type="text" value="1" name="quantity">
-										<div class="btn_plus btn_action">+</div>
-									</div>
-									<button href="" class="btn_main btn_main_product">В корзину</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- END Product Item -->
-
-				<!-- BEGIN Product Item -->
-				<div class="col-sm-6 col-md-4">
-					<div class="product_item">
-						<a href="/">
-							<h4 class="product_item--name">Black pizza</h4>
-							<div class="product_item--pict">
-								<div class="added_to_cart"><img src="img/shopping-cart.png" alt=""></div>
-								<img class="product-image" src="img/product-1.jpg" alt="">
-								<div class="product_item--weight">Вес:&nbsp;<span>750</span>&nbsp;г</div>
-								<div class="product_item--size"><span>30</span>&nbsp;см</div>
-							</div>
-						</a>
-						<div class="product_item--footer">
-							<div class="product_item--descr">
-								<div class="product_item--info-btn"></div>
-								<p>Креветки, сыр дор блю, сыр, моцарелла, белый соус.</p>
-								<a href="/">Добавить компоненты>>></a>
-							</div>
-							<div class="product_item--price">
-								<div class="price"><span>215</span>&nbsp;грн</div>
-								<div class="choose">
-									<div class="quantity">
-										<div class="btn_minus btn_action disabled">-</div>
-										<input disabled type="text" value="1" name="quantity">
-										<div class="btn_plus btn_action">+</div>
-									</div>
-									<button href="" class="btn_main btn_main_product">В корзину</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- END Product Item -->
-
-				<!-- BEGIN Product Item -->
-				<div class="col-sm-6 col-md-4">
-					<div class="product_item">
-						<a href="/">
-							<h4 class="product_item--name">Black pizza</h4>
-							<div class="product_item--pict">
-								<div class="added_to_cart"><img src="img/shopping-cart.png" alt=""></div>
-								<img class="product-image" src="img/product-1.jpg" alt="">
-								<div class="product_item--weight">Вес:&nbsp;<span>750</span>&nbsp;г</div>
-								<div class="product_item--size"><span>30</span>&nbsp;см</div>
-							</div>
-						</a>
-						<div class="product_item--footer">
-							<div class="product_item--descr">
-								<div class="product_item--info-btn"></div>
-								<p>Креветки, сыр дор блю, сыр, моцарелла, белый соус.</p>
-								<a href="/">Добавить компоненты>>></a>
-							</div>
-							<div class="product_item--price">
-								<div class="price"><span>215</span>&nbsp;грн</div>
-								<div class="choose">
-									<div class="quantity">
-										<div class="btn_minus btn_action disabled">-</div>
-										<input disabled type="text" value="1" name="quantity">
-										<div class="btn_plus btn_action">+</div>
-									</div>
-									<button href="" class="btn_main btn_main_product">В корзину</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- END Product Item -->
-
-				<!-- BEGIN Product Item -->
-				<div class="col-sm-6 col-md-4">
-					<div class="product_item">
-						<a href="/">
-							<h4 class="product_item--name">Black pizza</h4>
-							<div class="product_item--pict">
-								<div class="added_to_cart"><img src="img/shopping-cart.png" alt=""></div>
-								<img class="product-image" src="img/product-1.jpg" alt="">
-								<div class="product_item--weight">Вес:&nbsp;<span>750</span>&nbsp;г</div>
-								<div class="product_item--size"><span>30</span>&nbsp;см</div>
-							</div>
-						</a>
-						<div class="product_item--footer">
-							<div class="product_item--descr">
-								<div class="product_item--info-btn"></div>
-								<p>Креветки, сыр дор блю, сыр, моцарелла, белый соус.</p>
-								<a href="/">Добавить компоненты>>></a>
-							</div>
-							<div class="product_item--price">
-								<div class="price"><span>215</span>&nbsp;грн</div>
-								<div class="choose">
-									<div class="quantity">
-										<div class="btn_minus btn_action disabled">-</div>
-										<input disabled type="text" value="1" name="quantity">
-										<div class="btn_plus btn_action">+</div>
-									</div>
-									<button href="" class="btn_main btn_main_product">В корзину</button>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<!-- END Product Item -->
+				
 			</div>
 		</div>
 	</div>
@@ -417,7 +254,7 @@
 	<!-- BEGIN Delivery -->
 	<div class="delivery">
 		<div class="container">
-			<h3 class="section_title section_title--white">Бесплатная доставка пиццы в Черновцах <br />из ресторана Дон Густаво</h3>
+			<h1 class="section_title section_title--white">Бесплатная доставка пиццы в Черновцах <br />из ресторана Дон Густаво</h1>
 			<p>Заказать пиццу в Черновцах можно в сети ресторанов “Дон Густаво”, которая уже 3 года дарит <br />
 				незабываемый вкус своим гостям.</p>
 			<p>Наша доставка пиццы – одна из самых быстрых в Черновцах, чтобы радовать вас горячей, ароматной <br />
@@ -441,10 +278,6 @@
 	</div>
 	<!-- END Photo -->
 
-
-	
-
-
 	<!-- BEGIN Footer -->
 	<footer class="footer">
 		<div class="container">
@@ -457,18 +290,18 @@
 					</div>
 					<div class="contact_item">
 						<img src="img/mobile.png" alt="">
-						<a class="footer_tel" href="tel:+380666266808">+380 (66) 626 68 08</a>
-						<a class="footer_tel" href="tel:+380666757185">+380 (66) 675 71 85</a>
+						<a class="footer_tel" onclick="gtag('event', 'tel1');" href="tel:+380666266808">+380 (66) 626 68 08</a>
+						<a class="footer_tel" onclick="gtag('event', 'tel2');" href="tel:+380666757185">+380 (66) 675 71 85</a>
 					</div>
 				</div>
 				<div class="payment">
-					<h3 class="section_title section_title--white">Контакты</h3>
+					<h3 class="section_title section_title--white">Способы оплаты:</h3>
 					<img class="payment_icon" src="img/payment-icon.png" alt="">
-					<p>Оплата при доставке наличными или картами банка Visa и Mastercard</p>
+					<p>Оплата при доставке наличными <br />или картами банка Visa и Mastercard</p>
 					<img class="liqpay" src="img/liqpay.png" alt="" class="">
 					<strong>Скачивайте мобильное приложение для заказа онлайн:</strong>
-					<img class="app-store" src="img/apple-store.png" alt="">
-					<img class="app-store" src="img/google-store.png" alt="">
+					<a target="_blank" href="https://apps.apple.com/ua/app/don-gustavo/id1476704675?l=ru"><img class="app-store" src="img/apple-store.png" alt=""></a>
+					<a target="_blank" href="https://play.google.com/store/apps/details?id=ua.com.wl.dongustavo"><img class="app-store" src="img/google-store.png" alt=""></a>
 				</div>
 				<div class="map">
 					<h3 class="section_title section_title--white">Карта сайта</h3>
@@ -491,7 +324,7 @@
 				</div>
 				<div class="made_by">
 					Проект <br />разработан:
-					<img src="img/logo-dev.png" alt="">
+					<a target="_blank" href="https://kornienko-studio.marketing "><img src="img/logo-dev.png" alt=""></a>
 				</div>
 			</div>
 		</div>
